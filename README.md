@@ -1,3 +1,9 @@
+**Purpose of this fork is to add callback function to FatVolume::freeClusterCount (see https://github.com/greiman/SdFat/issues/85)**
+
+Below is the original readme.
+
+--------------
+
 The Arduino SdFat library provides read/write access to FAT16/FAT32
 file systems on SD/SDHC flash cards.
 
@@ -11,7 +17,7 @@ The SPI divisor has been replaced by SPISettings in the begin() call.
 bool begin(uint8_t csPin = SS, SPISettings spiSettings = SPI_FULL_SPEED);
 ```
 
-Several macros have been defined for backward compatibility. 
+Several macros have been defined for backward compatibility.
 
 ```
 #define SD_SCK_MHZ(maxMhz) SPISettings(1000000UL*maxMhz, MSBFIRST, SPI_MODE0)
@@ -33,13 +39,13 @@ and call begin with no parameters.
 
 ```
  SdFatSdio sd;
- 
+
  ....
- 
+
   if (!sd.begin()) {
     // Handle failure.
   }
- 
+
 ```
 Please read changes.txt and the html documentation in the extras folder for more information.
 
@@ -52,7 +58,7 @@ Please read the html documentation for this library.  Start with
 html/index.html and read the Main Page.  Next go to the Classes tab and
 read the documentation for the classes SdFat, SdFatEX, SdBaseFile,
 SdFile, File, StdioStream, ifstream, ofstream, and others.
- 
+
 Please continue by reading the html documentation.
 
 Updated 26 Apr 2017

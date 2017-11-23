@@ -212,7 +212,7 @@ class FatVolume {
    *
    * \return Count of free clusters for success or -1 if an error occurs.
    */
-  int32_t freeClusterCount();
+  int32_t freeClusterCount(void (*callback)() = NULL);
   /** Initialize a FAT volume.  Try partition one first then try super
    * floppy format.
    *

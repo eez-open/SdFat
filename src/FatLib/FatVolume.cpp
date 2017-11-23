@@ -361,7 +361,7 @@ fail:
   return false;
 }
 //------------------------------------------------------------------------------
-int32_t FatVolume::freeClusterCount() {
+int32_t FatVolume::freeClusterCount(void (*callback)()) {
 #if MAINTAIN_FREE_CLUSTER_COUNT
   if (m_freeClusterCount >= 0) {
     return m_freeClusterCount;
@@ -383,6 +383,7 @@ int32_t FatVolume::freeClusterCount() {
       if (fg && c == 0) {
         free++;
       }
+      if (callback) callback();
     }
   } else if (fatType() == 16 || fatType() == 32) {
     lba = m_fatStartBlock;
@@ -410,6 +411,7 @@ int32_t FatVolume::freeClusterCount() {
         }
       }
       todo -= n;
+      if (callback) callback();
     }
   } else {
     // invalid FAT type

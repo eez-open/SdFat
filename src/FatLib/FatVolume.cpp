@@ -443,17 +443,20 @@ bool FatVolume::init(uint8_t part) {
   if (part) {
     if (part > 4) {
       DBG_FAIL_MACRO;
+      m_initErrorCode |= 1 << (8 * (1 + part));
       goto fail;
     }
     pc = cacheFetchData(0, FatCache::CACHE_FOR_READ);
     if (!pc) {
       DBG_FAIL_MACRO;
+      m_initErrorCode |= 2 << (8 * (1 + part));
       goto fail;
     }
     part_t* p = &pc->mbr.part[part - 1];
     if ((p->boot & 0X7F) != 0 || p->firstSector == 0) {
       // not a valid partition
       DBG_FAIL_MACRO;
+      m_initErrorCode |= 3 << (8 * (1 + part));
       goto fail;
     }
     volumeStartBlock = p->firstSector;
@@ -461,6 +464,7 @@ bool FatVolume::init(uint8_t part) {
   pc = cacheFetchData(volumeStartBlock, FatCache::CACHE_FOR_READ);
   if (!pc) {
     DBG_FAIL_MACRO;
+    m_initErrorCode |= 4 << (8 * (1 + part));
     goto fail;
   }
   fbs = &(pc->fbs32);
@@ -469,6 +473,7 @@ bool FatVolume::init(uint8_t part) {
       fbs->reservedSectorCount == 0) {
     // not valid FAT volume
     DBG_FAIL_MACRO;
+    m_initErrorCode |= 5 << (8 * (1 + part));
     goto fail;
   }
   m_blocksPerCluster = fbs->sectorsPerCluster;
@@ -478,6 +483,7 @@ bool FatVolume::init(uint8_t part) {
   for (tmp = 1; m_blocksPerCluster != tmp; tmp <<= 1, m_clusterSizeShift++) {
     if (tmp == 0) {
       DBG_FAIL_MACRO;
+      m_initErrorCode |= 6 << (8 * (1 + part));
       goto fail;
     }
   }
@@ -511,6 +517,7 @@ bool FatVolume::init(uint8_t part) {
     m_fatType = 12;
     if (!FAT12_SUPPORT) {
       DBG_FAIL_MACRO;
+      m_initErrorCode |= 7 << (8 * (1 + part));
       goto fail;
     }
   } else if (clusterCount < 65525) {

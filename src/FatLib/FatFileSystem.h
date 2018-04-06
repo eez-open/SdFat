@@ -49,8 +49,35 @@ class FatFileSystem : public  FatVolume {
   bool begin(BlockDriver* blockDev, uint8_t part = 0) {
     m_blockDev = blockDev;
     vwd()->close();
-    return (part ? init(part) : init(1) || init(0))
-            && vwd()->openRoot(this) && FatFile::setCwd(vwd());
+
+    bool result;
+    if (part) {
+      result = init(part);
+      if (!result) {
+        m_fsBeginErrorCode = 1 | m_initErrorCode;
+        return false;
+      }
+    } else {
+      result = init(1) || init(0);
+      if (!result) {
+        m_fsBeginErrorCode = 2 | m_initErrorCode;
+        return false;
+      }
+    }
+
+    result = vwd()->openRoot(this);
+    if (!result) {
+      m_fsBeginErrorCode = 3;
+      return false;
+    }
+
+    result = FatFile::setCwd(vwd());
+    if (!result) {
+      m_fsBeginErrorCode = 4;
+      return false;
+    }
+
+    return true;
   }
 #if ENABLE_ARDUINO_FEATURES
    /** List the directory contents of the volume working directory to Serial.
@@ -320,7 +347,12 @@ fail:
     return FatVolume::wipe(pr);
   }
 
+  int fsBeginErrorCode() const {
+    return m_fsBeginErrorCode;
+  }
+
  private:
   FatFile m_vwd;
+  int m_fsBeginErrorCode;
 };
 #endif  // FatFileSystem_h

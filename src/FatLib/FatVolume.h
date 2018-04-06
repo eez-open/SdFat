@@ -261,6 +261,9 @@ class FatVolume {
     return fatGet(n, v);
   }
 //------------------------------------------------------------------------------
+ protected:
+  uint32_t m_initErrorCode;
+//------------------------------------------------------------------------------
  private:
   // Allow FatFile and FatCache access to FatVolume private functions.
   friend class FatCache;

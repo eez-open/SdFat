@@ -1,4 +1,7 @@
-**Purpose of this fork is to add callback function to FatVolume::freeClusterCount (see https://github.com/greiman/SdFat/issues/85)**
+[![GitHub release](https://img.shields.io/github/release/eez-open/SdFat.svg)](https://github.com/eez-open/SdFat/releases)
+[![license](https://img.shields.io/github/license/eez-open/SdFat.svg)](https://github.com/eez-open/SdFat/blob/master/LICENSE.md)
+
+**Purpose of this fork is to add callback function to FatVolume::freeClusterCount** (see SdFat issue [#85](https://github.com/greiman/SdFat/issues/85))
 
 Below is the original readme.
 

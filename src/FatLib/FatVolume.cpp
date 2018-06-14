@@ -468,12 +468,22 @@ bool FatVolume::init(uint8_t part) {
     goto fail;
   }
   fbs = &(pc->fbs32);
-  if (fbs->bytesPerSector != 512 ||
-      fbs->fatCount != 2 ||
-      fbs->reservedSectorCount == 0) {
+  if (fbs->bytesPerSector != 512) {
     // not valid FAT volume
     DBG_FAIL_MACRO;
     m_initErrorCode |= 5 << (8 * (1 + part));
+    goto fail;
+  }
+  if (fbs->fatCount != 2) {
+    // not valid FAT volume
+    DBG_FAIL_MACRO;
+    m_initErrorCode |= 6 << (8 * (1 + part));
+    goto fail;
+  }
+  if (fbs->reservedSectorCount == 0) {
+    // not valid FAT volume
+    DBG_FAIL_MACRO;
+    m_initErrorCode |= 7 << (8 * (1 + part));
     goto fail;
   }
   m_blocksPerCluster = fbs->sectorsPerCluster;
@@ -483,7 +493,7 @@ bool FatVolume::init(uint8_t part) {
   for (tmp = 1; m_blocksPerCluster != tmp; tmp <<= 1, m_clusterSizeShift++) {
     if (tmp == 0) {
       DBG_FAIL_MACRO;
-      m_initErrorCode |= 6 << (8 * (1 + part));
+      m_initErrorCode |= 8 << (8 * (1 + part));
       goto fail;
     }
   }
@@ -517,7 +527,7 @@ bool FatVolume::init(uint8_t part) {
     m_fatType = 12;
     if (!FAT12_SUPPORT) {
       DBG_FAIL_MACRO;
-      m_initErrorCode |= 7 << (8 * (1 + part));
+      m_initErrorCode |= 9 << (8 * (1 + part));
       goto fail;
     }
   } else if (clusterCount < 65525) {
